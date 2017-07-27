@@ -27,6 +27,7 @@ contract Randomized {
     }
 
     function privatized(bytes32 crypted, bytes publicKey) constant returns (bytes32) {
+        // Waiting for https://github.com/ethereum/EIPs/pull/198
         return 123;
     }
 
