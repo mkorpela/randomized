@@ -1,12 +1,48 @@
 pragma solidity ^0.4.4;
 
-contract Randomized {
 
+contract Owned {
     address public owner;
+    address private ownerCandidate;
+    bytes32 private ownerCandidateKeyHash;
+
+    function Owned() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+
+    modifier onlyOwnerCandidate(bytes32 key) {
+        require(msg.sender == ownerCandidate);
+        require(sha3(key) == ownerCandidateKeyHash);
+        _;
+    }
+
+    function transferOwnership(address candidate, bytes32 keyHash)
+        public
+        onlyOwner
+    {
+        ownerCandidate = candidate;
+        ownerCandidateKeyHash = keyHash;
+    }
+
+    function acceptOwnership(bytes32 key)
+        external
+        onlyOwnerCandidate(key)
+    {
+        owner = ownerCandidate;
+    }
+}
+
+
+contract Randomized is Owned {
+
     uint public price;
 
     function Randomized() {
-        owner = msg.sender;
         price = 10;
     }
 
