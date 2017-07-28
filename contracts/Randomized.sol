@@ -28,19 +28,19 @@ contract Randomized is Owned {
 
     struct Key {
         uint entryBlockNumber;
-        bytes publicKey;
+        bytes32 publicKey;
     }
 
     mapping (address => Key) keys;
 
-    function setKey(bytes publicKey) payable public {
+    function setKey(bytes32 publicKey) payable public {
         require(!disabled);
         require(msg.value >= price);
         keys[msg.sender].entryBlockNumber = block.number;
         keys[msg.sender].publicKey = publicKey;
     }
 
-    function validate(uint seedBlockNumber, bytes seed, address sender, bytes32 crypted, bytes32 result) constant public returns (bool) {
+    function validate(uint seedBlockNumber, bytes32 seed, address sender, bytes32 crypted, bytes32 result) constant public returns (bool) {
         require(!disabled);
         if (keys[sender].entryBlockNumber >= seedBlockNumber) return false;
         if (keccak256(crypted, seed) != result) return false;
@@ -60,9 +60,10 @@ contract Randomized is Owned {
         disabled = false;
     }
 
-    function privatized(bytes32 crypted, bytes publicKey) constant private returns (bytes32) {
+    function privatized(bytes32 crypted, bytes32 publicKey) constant private returns (bytes32) {
         // Waiting for https://github.com/ethereum/EIPs/pull/198
-        return crypted;
+        // For now using just a simple bitwise xor to get the bidirectional mapping for testing
+        return crypted ^ publicKey;
     }
 
 }
