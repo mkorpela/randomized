@@ -17,7 +17,7 @@ contract Owned {
 
     modifier onlyOwnerCandidate(bytes32 key) {
         require(msg.sender == ownerCandidate);
-        require(sha3(key) == ownerCandidateKeyHash);
+        require(keccak256(key) == ownerCandidateKeyHash);
         _;
     }
 
