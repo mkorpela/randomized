@@ -31,20 +31,19 @@ contract Randomized is Owned {
         bytes32 publicKey;
     }
 
-    mapping (address => Key) keys;
+    mapping (address => Key[]) keys;
 
     function setKey(bytes32 publicKey) payable public {
         require(!disabled);
         require(msg.value >= price);
-        keys[msg.sender].entryBlockNumber = block.number;
-        keys[msg.sender].publicKey = publicKey;
+        keys[msg.sender].push(Key(block.number, publicKey));
     }
 
     function validate(uint seedBlockNumber, bytes32 seed, address sender, bytes32 crypted, bytes32 result) constant public returns (bool) {
         require(!disabled);
-        if (keys[sender].entryBlockNumber >= seedBlockNumber) return false;
+        if (keys[sender][0].entryBlockNumber >= seedBlockNumber) return false;
         if (keccak256(crypted, seed) != result) return false;
-        return keccak256(seed) == privatized(crypted, keys[sender].publicKey);
+        return keccak256(seed) == privatized(crypted, keys[sender][0].publicKey);
     }
 
     function setPrice(uint newprice) public onlyOwner {

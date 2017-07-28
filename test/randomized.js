@@ -23,8 +23,20 @@ contract("Randomized", function(accounts) {
             "0x42511dd7f19347a57ddff71656040d8f71af2f328df5f7cf5e14ea1fb4ffbcd2", 
             "0xead113545fe563407133a4ce2b2c7d1149144ba6bf66f103799b1672698d3975");
         }).then(function(isValid) {
-            console.log(isValid);
             assert.isTrue(isValid);
         });
     });
+    it("should allow changing public key and validating old stuff with old key", function() {
+        return Randomized.deployed().then(function(instance){
+            instance.setKey(web3.toHex("secondKey"), {value:10});
+            console.log(instance.keys);
+            return instance.validate(1000, 
+            web3.toHex("seed"), 
+            accounts[0], 
+            "0x42511dd7f19347a57ddff71656040d8f71af2f328df5f7cf5e14ea1fb4ffbcd2", 
+            "0xead113545fe563407133a4ce2b2c7d1149144ba6bf66f103799b1672698d3975");
+        }).then(function(isValid) {
+            assert.isTrue(isValid);
+        });
+    })
 });
