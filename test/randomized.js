@@ -3,6 +3,8 @@ var Randomized = artifacts.require("./Randomized.sol");
 contract("Randomized", function(accounts) {
     it("should allow registering when value is payed", function() {
         return Randomized.deployed().then(function(instance){
+            instance.setPrice(10);
+            instance.enableContract();
             return instance.setKey("abc", {value:10});
         });
     });
