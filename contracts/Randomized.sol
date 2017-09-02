@@ -36,14 +36,17 @@ contract Randomized is Owned {
     function setKey(bytes32 publicKey) payable public {
         require(!disabled);
         require(msg.value >= price);
-        keys[msg.sender].push(Key(block.number, publicKey));
+        Key[] storage senderKeys = keys[msg.sender];
+        require(senderKeys.length == 0 || senderKeys[senderKeys.length-1].entryBlockNumber < block.number);
+        senderKeys.push(Key(block.number, publicKey));
     }
 
     function validate(uint seedBlockNumber, bytes32 seed, address sender, bytes32 crypted, bytes32 result) constant public returns (bool) {
         require(!disabled);
-        if (keys[sender][0].entryBlockNumber >= seedBlockNumber) return false;
         if (keccak256(crypted, seed) != result) return false;
-        return keccak256(seed) == privatized(crypted, keys[sender][0].publicKey);
+        Key memory key = findKey(keys[sender], seedBlockNumber);
+        if (key.entryBlockNumber >= seedBlockNumber) return false;
+        return keccak256(seed) == privatized(crypted, key.publicKey);
     }
 
     function setPrice(uint newprice) public onlyOwner {
@@ -57,6 +60,17 @@ contract Randomized is Owned {
 
     function enableContract() public onlyOwner {
         disabled = false;
+    }
+
+    function findKey(Key[] addressKeys, uint seedBlockNumber) constant private returns (Key) {
+        uint x = addressKeys.length;
+        while (x > 0) {
+            x -= 1;
+            if (seedBlockNumber > addressKeys[x].entryBlockNumber) {
+                return addressKeys[x];
+            } 
+        }
+        return Key(0, 0x0);
     }
 
     function privatized(bytes32 crypted, bytes32 publicKey) constant private returns (bytes32) {
