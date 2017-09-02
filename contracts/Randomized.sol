@@ -75,6 +75,8 @@ contract Randomized is Owned {
 
     function privatized(bytes32 crypted, bytes32 publicKey) constant private returns (bytes32) {
         // Waiting for https://github.com/ethereum/EIPs/pull/198
+        // And specifically this from geth (and same from other clients): 
+        // https://github.com/ethereum/go-ethereum/blob/104375f398bdfca88183010cc3693e377ea74163/core/vm/contracts.go#L56
         // For now using just a simple bitwise xor to get the bidirectional mapping for testing
         return crypted ^ publicKey;
     }
