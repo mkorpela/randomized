@@ -43,9 +43,11 @@ contract Randomized is Owned {
 
     function validate(uint seedBlockNumber, bytes32 seed, address sender, bytes32 crypted, bytes32 result) constant public returns (bool) {
         require(!disabled);
-        if (keccak256(crypted, seed) != result) return false;
+        if (keccak256(crypted, seed) != result) 
+            return false;
         Key memory key = findKey(keys[sender], seedBlockNumber);
-        if (key.entryBlockNumber >= seedBlockNumber) return false;
+        if (key.entryBlockNumber >= seedBlockNumber) 
+            return false;
         return keccak256(seed) == privatized(crypted, key.publicKey);
     }
 
