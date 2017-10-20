@@ -1,11 +1,9 @@
 var Randomized = artifacts.require("./Randomized.sol");
 
 contract("Randomized", function(accounts) {
-    it("should allow registering when value is payed", function() {
+    it("should allow registering", function() {
         return Randomized.deployed().then(function(instance){
-            instance.setPrice(10);
-            instance.enableContract();
-            return instance.setKey(web3.toHex("abc"), {value:10});
+            return instance.setKey(web3.toHex("abc"));
         });
     });
     it("should say false for an invalid random number", function() {
@@ -28,7 +26,7 @@ contract("Randomized", function(accounts) {
     });
     it("should allow changing public key and validating old stuff with old key", function() {
         return Randomized.deployed().then(function(instance){
-            instance.setKey(web3.toHex("secondKey"), {value:10});
+            instance.setKey(web3.toHex("secondKey"));
             return instance.validate(web3.eth.blockNumber-1, 
             web3.toHex("seed"), 
             accounts[0], 
