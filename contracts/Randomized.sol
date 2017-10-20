@@ -27,6 +27,7 @@ contract Randomized {
 
     function findKey(Key[] addressKeys, uint seedBlockNumber) constant private returns (Key) {
         uint x = addressKeys.length;
+        //TODO: These are in order => use binary search
         while (x > 0) {
             x -= 1;
             if (seedBlockNumber > addressKeys[x].entryBlockNumber) {
