@@ -8,5 +8,6 @@ The pseudorandom number is composed as follows:
 number = keccak256( rsa( keccak256(seed), S ), seed )
 
 keccak256 operations are used to make the number generation one way from the private keys owners point of view.
+They are also there to ensure that distribution is even.
 
 
