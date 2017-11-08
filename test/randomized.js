@@ -41,5 +41,9 @@ contract("Randomized", function(accounts) {
                 });
               });
         })
-    })
+    });
+    it("lets just test modexp", function() {
+        return Randomized.deployed().then(function(instance){
+            return instance.modexp("0x0", "0xa", "0x100101abc").then(function (value) {console.log(value);});});
+    });
 });
